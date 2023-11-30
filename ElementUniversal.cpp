@@ -303,7 +303,7 @@ void ElementUniversal::display_tab_22(double tab[2][2]){
 
 void ElementUniversal::display_tab_4(double tab[4]){
     for (int i = 0; i < 4; ++i) {
-            cout<<setw(10)<<tab[i]<<"     ";
+            cout<<setw(10)<<setprecision(7)<<tab[i]<<"     ";
         }
         cout<<endl;
 }

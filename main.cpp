@@ -19,7 +19,7 @@ int main() {
    // wyswietl_nodes(siatka);
   // Gauss(4).wym1D(fun1);  // Gauss(4).wym2D(fun2);
 
-   int ile_pkt=3;
+   int ile_pkt=2;
    ElementUniversal elementUniversal(ile_pkt);
    elementUniversal.obliczanie_ksi_etta();
     elementUniversal.wyswietl();
