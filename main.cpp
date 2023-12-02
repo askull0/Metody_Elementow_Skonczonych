@@ -37,16 +37,35 @@ int main() {
 
     }
 
+
     for (int i = 0; i < dane.Elements_number; ++i) {
        cout<<"****************************************************************************"<<endl;
        cout<<"Element "<<i+1<<endl;
        cout<<"****************************************************************************"<<endl;
        elementUniversal.jakobian(siatka.Elements[i], dane.Conductivity,i);cout<<endl;
-       elementUniversal.macierz_Hbc(ile_pkt,siatka.Elements[i],i);
+       elementUniversal.macierz_Hbc(ile_pkt,siatka.Elements[i],i);//i wektor P
+        siatka.Elements[i].obliczanie_h_calk();
+        cout<<"H calkowite elmentu "<<i<<endl;
+        siatka.Elements[i].display_H_calk();
+
+
    }
+
+    SOE soe;
+    soe.agregacja(siatka);
+    cout<<endl<<"Globalne H"<<endl;soe.display_G_H();
+    cout<<endl<<"Globalne P"<<endl;soe.display_G_P();
+
+
+/*  //wszytskie naraz h calk
+    for (int i = 0; i < dane.Elements_number; ++i) {
+        cout<<"H calkowite elmentu "<<i<<endl;
+        siatka.Elements[i].display_H_calk();
+    }*/
 
 
 /* cout<<"\n\n****************************************************************************\n"
+
        "Sprawdzenie czy h i hbc sa w struct element"<<endl;
         for (int q = 0; q < dane.Elements_number; ++q) {
             cout << "element " << q + 1 << endl<<endl;

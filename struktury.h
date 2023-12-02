@@ -24,12 +24,17 @@ public:
     double tab_H[4][4];
     double Hbc[4][4];
     double P[4];
+    double H_CALK[4][4];  // suma H i Hbc
 
     Element(){ ide=0; for (int i = 0; i < 4; i++) { ID[i]=Node();}   }
 
     void set_tabH(double tab[4][4]);
     void set_Hbc(double tab[4][4]);
     void set_P(double tab[4]);
+    void display_H_calk();
+
+    void obliczanie_h_calk();
+
 };
 
 class Grid {
@@ -39,6 +44,18 @@ public:
 
     Grid();
    // ~Grid();
+};
+
+class SOE{
+public:
+    double **G_H;
+    double *G_P;
+    SOE();
+    void agregacja(Grid &siatka);
+    void display_G_H();
+    void display_G_P();
+
+  //  ~SOE();
 };
 
 void wyswietl_dane();

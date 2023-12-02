@@ -23,11 +23,6 @@ ElementUniversal::ElementUniversal(int e) : E(pow(e,2)), obj(e) { //bedzie liczy
         dtksi[i] = new double[4];// tablica ksi przeyslamy etta-n, y // dN/dksi
     }
 
-//    // Inicjalizacja każdego elementu tablicy surface
-//    for (int q = 0; q < 4; q++) {
-//        surface[q] = Surface(e);//bledy wszytskoe sie rypie e jednak w innych indeksach tez jest zle
-//    }
-
 }//dla jakiego elemntu calke czyli np. 2 pkt lub 3 lub 4
 
 //dNksi - e , przesylane etta- n

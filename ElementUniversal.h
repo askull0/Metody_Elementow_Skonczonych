@@ -25,7 +25,6 @@ public:
     double Hbc_kon[4][4];
     Surface surface[4];
 
-
     ElementUniversal(int e);
 //dNksi - e , przesylane etta- n
     double dNksi1(double n);
@@ -63,7 +62,6 @@ public:
     double F_N2(double ksi, double etta);
     double F_N3(double ksi, double etta);
     double F_N4(double ksi, double etta);
-
 
     ~ElementUniversal();
 
