@@ -2,6 +2,8 @@
 #define MES_STRUKTURY_H
 #include <iostream>
 #include <iomanip>
+#include <cmath>
+const double eps = 1e-12;
 using namespace std;
 
 struct GlobalData{
@@ -50,10 +52,22 @@ class SOE{
 public:
     double **G_H;
     double *G_P;
+    double G_HP;
     SOE();
     void agregacja(Grid &siatka);
     void display_G_H();
     void display_G_P();
+
+    //uklad rownan
+
+    static void print(double ** A);
+    static void swap_row(double **A, double * B, int i, int j);
+    static int eliminacja(double **A,  double *B);
+    static double* result(double **A,  double *B, double *x);
+    static void gauss_elim(double **A,  double *B, double *x);
+    void gauss_crout(double *x);
+
+    bool gauss_crout2(double *X);
 
   //  ~SOE();
 };
