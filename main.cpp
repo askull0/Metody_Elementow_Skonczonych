@@ -22,12 +22,12 @@ int main() {
    int ile_pkt=2;
    ElementUniversal elementUniversal(ile_pkt);
    elementUniversal.obliczanie_ksi_etta();
-  // elementUniversal.wyswietl();
+   elementUniversal.wyswietl();
 
 
     cout<<endl;
     elementUniversal.oblicanie_tabN();
-   /* for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i) {
         cout<<"surface "<<i+1<<endl;
         for (int j = 0; j < ile_pkt; ++j) {
             for (int k = 0; k < 4; ++k) {
@@ -35,7 +35,7 @@ int main() {
             }cout<<endl;
         }cout<<endl;
 
-    }*/
+    }
 
 
     for (int i = 0; i < dane.Elements_number; ++i) {
@@ -45,24 +45,22 @@ int main() {
        elementUniversal.jakobian(siatka.Elements[i], dane.Conductivity,i);cout<<endl;
        elementUniversal.macierz_Hbc(ile_pkt,siatka.Elements[i],i);//i wektor P
         siatka.Elements[i].obliczanie_h_calk();
-    //    cout<<"H calkowite elmentu "<<i<<endl;
-    //    siatka.Elements[i].display_H_calk();
+        cout<<"H calkowite elmentu "<<i<<endl;
+        siatka.Elements[i].display_H_calk();
 
 
    }
 
     SOE soe;
     soe.agregacja(siatka);
-/*    cout<<endl<<"Globalne H"<<endl;soe.display_G_H();
-    cout<<endl<<"Globalne P"<<endl;soe.display_G_P();*/
+    cout<<endl<<"Globalne H"<<endl;soe.display_G_H();
+    cout<<endl<<"Globalne P"<<endl;soe.display_G_P();
 
     double* X = new double[dane.Nodes_number];
     soe.gauss_crout(X);
-  //  soe.gauss_crout2(X);
 
-//    for (int i = 0; i < dane.Nodes_number; ++i) {
-//        cout<<X[i]<<endl;
-//    }
+//    soe.gauss_crout2(X);
+//    for (int i = 0; i < dane.Nodes_number; ++i) { cout<<x<<i<<" = "<<X[i]<<endl;  }
 
 /*  //wszytskie naraz h calk
     for (int i = 0; i < dane.Elements_number; ++i) {

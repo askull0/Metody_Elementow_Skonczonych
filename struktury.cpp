@@ -26,7 +26,6 @@ void Element::obliczanie_h_calk() {
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
             H_CALK[i][j] = tab_H[i][j] + Hbc[i][j];
-
         }
     }
 }
@@ -176,9 +175,9 @@ double* SOE::result(double **A,  double *B, double *x){
         x[i] = x[i]/A[i][i];
     }
 
-    cout<<endl<<"Rozwiazanie ukladu rownan:"<<endl;
+    cout<<endl<<endl<<"Rozwiazanie ukladu rownan:"<<endl;
     for (int i=0; i<dane.Nodes_number; i++)
-        cout<<setprecision(7)<< " x("<<i<<") = "<< x[i] <<endl;
+        cout<<setprecision(7)<< " x"<<i<<" = "<< x[i] <<endl;
     return x;
 }
 
