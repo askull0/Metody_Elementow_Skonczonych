@@ -13,6 +13,7 @@ Surface::Surface(int e) :e(e){
 ElementUniversal::ElementUniversal(int e) : E(pow(e,2)), obj(e) { //bedzie liczyc dla jakiego elemntu calke
     dtetta=new double*[E];
     dtksi=new double*[E];
+    tab_FN=new double*[E];
 
     for (int i = 0; i < 4; ++i) {
         surface[i] = Surface( e );
@@ -21,6 +22,7 @@ ElementUniversal::ElementUniversal(int e) : E(pow(e,2)), obj(e) { //bedzie liczy
     for (int i = 0; i < E; i++) {
         dtetta[i] = new double[4];
         dtksi[i] = new double[4];// tablica ksi przeyslamy etta-n, y // dN/dksi
+        tab_FN[i] = new double[4];
     }
 
 }//dla jakiego elemntu calke czyli np. 2 pkt lub 3 lub 4
@@ -77,6 +79,34 @@ void  ElementUniversal::wyswietl(){
     display_tab_E4(dtksi);
 }
 
+void ElementUniversal::obliczanie_tab_FN(){
+    for (int i = 0; i < 4; ++i) {
+        int a=0,b=0; //liczniki
+        for (int j = 0; j < E; ++j) {
+            if (a <= obj.n) {
+                if (a == obj.n) {  a = 0;  b++;   }
+                switch(i){
+                    case 0:
+                        tab_FN[j][i]=F_N1(obj.x[a], obj.x[b]);break;
+                    case 1:
+                        tab_FN[j][i]=F_N2(obj.x[a], obj.x[b]);break;
+                    case 2:
+                        tab_FN[j][i]=F_N3(obj.x[a], obj.x[b]);break;
+                    case 3:
+                        tab_FN[j][i]=F_N4(obj.x[a], obj.x[b]);break;
+                }
+                a++;
+            }
+        }
+    }
+
+}
+void ElementUniversal::wyswietl_tab_FN(){
+    cout<<"****************************************************************************"<<endl;
+    cout<<"wartosci FN"<<endl;
+    display_tab_E4(tab_FN);
+}
+
 //sprawdzenie testowe pkt
 /*    void ElementUniversal::funkja_siatka(){
         punkty[0].X = 0.0;
@@ -95,7 +125,7 @@ void  ElementUniversal::wyswietl(){
         }
     }*/
 
-void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){
+void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){  //macierz H i macierz C
 
     double tab_jakobian[2][2], tab_j_wyzn[2][2];//jakobian przemnozony przez odwrotnosc wyzn_J
     double **tab_X, **tab_Y;
@@ -103,7 +133,9 @@ void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){
     double H_suma[4][4], H_pkt[4][4];
     int count_n=0,count_m=0;//liczniki
     double wyz_j=0.;
-
+    double tab_C[4][4];    fill_n(&tab_C[0][0], 4 * 4, 0);
+    double C_pkt[4][4];    fill_n(&C_pkt[0][0], 4 * 4, 0);
+    double tmp_C[4][4];      fill_n(&tmp[0][0], 4 * 4, 0);
 
     tab_X = new double*[E];//ile wierszy
     tab_Y = new double*[E];//wierszy
@@ -113,7 +145,7 @@ void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){
         tab_Y[i] = new double[4];
     }
 
-    for(int q=0; q<E; q++) { // q - odp konrektnemu pkt calkowanie //pozniej pomysl - osobna funckja ktora bedzie otzymacwyac q
+    for(int q=0; q<E; q++) { // q - odp konrektnemu pkt calkowanie
 
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
@@ -147,7 +179,7 @@ void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){
             tab_Y[q][j]=tab_j_wyzn[1][0]*dtksi[q][j]+tab_j_wyzn[1][1]*dtetta[q][j];
         }
 
-        //macierz razy m.transponowane i wyliczanie H dla pkt
+        //macierz razy m.transponowane i wyliczanie H dla pkt  oraz wyliczanie C dla pkt
         if (count_m <= sqrt(E)) {
             if (count_m == sqrt(E)) {
                 count_m = 0;
@@ -164,6 +196,13 @@ void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){
 
                 tmp[i][j] = H_pkt[i][j]*obj.w[count_m] * obj.w[count_n];
                 H_kon[i][j]+=tmp[i][j];
+
+                //macierz C
+                tmp_C[i][j] = tab_FN[q][i] * tab_FN[q][j];
+                C_pkt[i][j]=tmp_C[i][j]*dane.Density*dane.SpecificHeat*wyz_j;
+                tab_C[i][j] = C_pkt[i][j]*obj.w[count_m] * obj.w[count_n];
+
+                C_kon[i][j]+=tab_C[i][j];
 
             }
         } count_m++;
@@ -186,13 +225,16 @@ void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){
     display_H(H_kon);
     elem.set_tabH(H_kon);
 
+    cout<<endl<<"C dla elementu "<<nr_e+1<<endl;
+    display_tab_44(C_kon);
+    elem.set_C(C_kon);
+
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
-            H_kon[i][j]=0;
+            C_kon[i][j]=0.;
+            H_kon[i][j]=0.;
         }
     }
-
-
 }
 
 

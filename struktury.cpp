@@ -15,17 +15,31 @@ void Element::set_Hbc(double tab[4][4]) {
         }
     }
 }
-void Element::set_P(double tab[4]) {
+void Element::set_C(double tab[4][4]) {
     for(int i = 0; i < 4; i++) {
-            P[i] = tab[i];
+        for(int j = 0; j < 4; j++) {
+            C[i][j] = tab[i][j];
+        }
+    }
+}
+void Element::set_P(double tab[4]) {
+    for (int i = 0; i < 4; ++i) {
+        P[i] = tab[i];
+        for (int j = 0; j < 4; ++j) {
+            C_tau[i][j]=C[i][j]/dane.SimulationStepTime;
+            C_t0[i]+=C_tau[i][j]*t0[j];
+        }
+        P[i]+=C_t0[i];
     }
 }
 
 void Element::obliczanie_h_calk() {
-   // double H_calk[4][4];  fill_n(&H_calk[0][0], 4 * 4, 0);
+    // double H_calk[4][4];  fill_n(&H_calk[0][0], 4 * 4, 0);
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
             H_CALK[i][j] = tab_H[i][j] + Hbc[i][j];
+            C_tau[i][j]=C[i][j]/dane.SimulationStepTime;
+            H_CALK[i][j]+=C_tau[i][j];
         }
     }
 }
@@ -38,6 +52,12 @@ void Element::display_H_calk(){
         cout << endl;
     }
 }
+void Element::display_P_calk(){
+    for (int i = 0; i < 4; ++i) {
+            cout << setw(10)<<P[i] << "   ";
+    } cout << endl;
+}
+
 
 Grid::Grid(){
     Nodes = new Node[dane.Nodes_number];
@@ -59,6 +79,7 @@ SOE::SOE(){
             G_H[i][j]=0.0;
         }
     }
+
 };
 
 void SOE::agregacja(Grid &siatka) {
@@ -78,6 +99,7 @@ void SOE::agregacja(Grid &siatka) {
             G_P[c]+=siatka.Elements[i].P[j];
         }
     }
+
 }
 
 //uklad rownan
@@ -96,7 +118,6 @@ void SOE::print(double ** A)
 void SOE::swap_row(double **A, double * B, int i, int j)
 {
     //cout<<"Zamieniam rzad "<< i <<" z "<<j<<endl;
-
     double temp2 = B[i];
     B[i] = B[j];
     B[j] = temp2;

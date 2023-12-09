@@ -9,8 +9,8 @@ GlobalData dane;
 void wczytywanie(Grid& siatka){
     string zm,sm; char smiec; int liczba, liczba1, l1,l2,l3,l4; double w_x,w_y;
     fstream plik;
-  //  plik.open("Test1_4_4.txt", ios::in);
-    plik.open("Test2_4_4_MixGrid.txt", ios::in);
+    //plik.open("Test1_4_4.txt", ios::in);
+   plik.open("Test2_4_4_MixGrid.txt", ios::in);
    // plik.open("Test3_31_31_kwadrat.txt", ios::in);
     //plik.open("Testowe.txt", ios::in);
 

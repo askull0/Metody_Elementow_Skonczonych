@@ -34,8 +34,10 @@ int main() {
                 cout<<setw(15)<<elementUniversal.surface[i].N[j][k]<<"  ";
             }cout<<endl;
         }cout<<endl;
-
     }
+
+    elementUniversal.obliczanie_tab_FN();
+    elementUniversal.wyswietl_tab_FN();
 
 
     for (int i = 0; i < dane.Elements_number; ++i) {
@@ -45,9 +47,11 @@ int main() {
        elementUniversal.jakobian(siatka.Elements[i], dane.Conductivity,i);cout<<endl;
        elementUniversal.macierz_Hbc(ile_pkt,siatka.Elements[i],i);//i wektor P
         siatka.Elements[i].obliczanie_h_calk();
-        cout<<"H calkowite elmentu "<<i<<endl;
+        cout<<endl;
+        cout<<"H calkowite elmentu "<<i+1<<endl;
         siatka.Elements[i].display_H_calk();
-
+        cout<<"P calkowite elmentu "<<i+1<<endl;
+        siatka.Elements[i].display_P_calk();
 
    }
 
@@ -59,8 +63,10 @@ int main() {
     double* X = new double[dane.Nodes_number];
     soe.gauss_crout(X);
 
+
 //    soe.gauss_crout2(X);
 //    for (int i = 0; i < dane.Nodes_number; ++i) { cout<<x<<i<<" = "<<X[i]<<endl;  }
+
 
 /*  //wszytskie naraz h calk
     for (int i = 0; i < dane.Elements_number; ++i) {

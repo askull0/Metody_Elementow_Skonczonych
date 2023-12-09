@@ -21,7 +21,10 @@ public:
     double **dtksi;//macierz przechwujaca wartossci po etta
     double **dtetta;//macierz przechwujaca wartossci po ksi
 
+    double **tab_FN;//wartosci f. ksztaltu w pkt calk
+
     double H_kon[4][4];
+    double C_kon[4][4];
     double Hbc_kon[4][4];
     Surface surface[4];
 
@@ -40,12 +43,14 @@ public:
     void obliczanie_ksi_etta();
     void wyswietl();
 
+    void obliczanie_tab_FN();
+    void wyswietl_tab_FN();
+
     //testowe
     //Node punkty[4];
    // void funkja_siatka();
 
     void jakobian(Element& elem, int& GD_k,int nr_e);
-
 
     void display_tab_22(double tab[2][2]);
     void display_tab_4(double tab[4]);
@@ -58,6 +63,7 @@ public:
     void funkcja_do_tabN(int i , double a, double b, int q);
 
     void macierz_Hbc(int x,Element& elem,int nr_e);//liczy tez wektor P
+
     double F_N1(double ksi, double etta);
     double F_N2(double ksi, double etta);
     double F_N3(double ksi, double etta);
