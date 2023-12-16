@@ -46,11 +46,7 @@ public:
     void obliczanie_tab_FN();
     void wyswietl_tab_FN();
 
-    //testowe
-    //Node punkty[4];
-   // void funkja_siatka();
-
-    void jakobian(Element& elem, int& GD_k,int nr_e);
+    void jakobian(Element& elem, int& GD_k,int nr_e);  //liczy H I C
 
     void display_tab_22(double tab[2][2]);
     void display_tab_4(double tab[4]);
@@ -62,7 +58,7 @@ public:
     void oblicanie_tabN();
     void funkcja_do_tabN(int i , double a, double b, int q);
 
-    void macierz_Hbc(int x,Element& elem,int nr_e);//liczy tez wektor P
+    void macierz_Hbc(int x,Element& elem,int nr_e);   //liczy tez wektor P
 
     double F_N1(double ksi, double etta);
     double F_N2(double ksi, double etta);

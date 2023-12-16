@@ -25,11 +25,6 @@ void Element::set_C(double tab[4][4]) {
 void Element::set_P(double tab[4]) {
     for (int i = 0; i < 4; ++i) {
         P[i] = tab[i];
-        for (int j = 0; j < 4; ++j) {
-            C_tau[i][j]=C[i][j]/dane.SimulationStepTime;
-            C_t0[i]+=C_tau[i][j]*t0[j];
-        }
-        P[i]+=C_t0[i];
     }
 }
 
@@ -38,12 +33,9 @@ void Element::obliczanie_h_calk() {
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
             H_CALK[i][j] = tab_H[i][j] + Hbc[i][j];
-            C_tau[i][j]=C[i][j]/dane.SimulationStepTime;
-            H_CALK[i][j]+=C_tau[i][j];
         }
     }
 }
-
 void Element::display_H_calk(){
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
@@ -58,6 +50,14 @@ void Element::display_P_calk(){
     } cout << endl;
 }
 
+void Element::display_C_calk(){
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            cout << setw(10)<<C[i][j] << "   ";
+        }
+        cout << endl;
+    }
+}
 
 Grid::Grid(){
     Nodes = new Node[dane.Nodes_number];
@@ -68,15 +68,29 @@ Grid::Grid(){
 };
 
 SOE::SOE(){
+
    G_H = new double*[dane.Nodes_number];
    G_P = new double [dane.Nodes_number];
+   G_C = new double*[dane.Nodes_number];
+
+    C_tau = new double*[dane.Nodes_number];
+    t0 = new double [dane.Nodes_number];
+    C_t0 = new double [dane.Nodes_number];
+
     for (int i = 0; i < dane.Nodes_number; ++i) {
         G_H[i] = new double[dane.Nodes_number];
+        G_C[i] = new double[dane.Nodes_number];
+        C_tau[i] = new double[dane.Nodes_number];
     }
+
     for (int i = 0; i < dane.Nodes_number; ++i) {
         G_P[i]=0.0;
+        C_t0[i]=0.0;
+        t0[i]=dane.InitialTemp;
         for (int j = 0; j < dane.Nodes_number; ++j) {
             G_H[i][j]=0.0;
+            G_C[i][j]=0.0;
+            C_tau[i][j]=0.0;
         }
     }
 
@@ -90,6 +104,7 @@ void SOE::agregacja(Grid &siatka) {
                     a = siatka.Elements[i].ID[k].id-1;
                     b = siatka.Elements[i].ID[l].id-1;
                 G_H[a][b]+=siatka.Elements[i].H_CALK[k][l];
+                G_C[a][b]+=siatka.Elements[i].C[k][l];
             }
         }
 
@@ -102,17 +117,17 @@ void SOE::agregacja(Grid &siatka) {
 
 }
 
-//uklad rownan
-//metoda druga
+//uklad rownan - metoda 1
+
 // wyswietl macierz
-void SOE::print(double ** A)
+/*void SOE::print(double ** A)
 {
     for (int i=0; i<dane.Nodes_number; i++, cout<<endl)
         for (int j=0; j<dane.Nodes_number; j++)
             cout<<" | "<<setw(10)<<A[i][j];
 
     cout<<endl;
-}
+}*/
 
 // zamien dwa rzedy ze soba
 void SOE::swap_row(double **A, double * B, int i, int j)
@@ -164,12 +179,9 @@ int SOE::eliminacja(double **A,  double *B)
                 else
                     A[i][j] -= A[k][j]*f; // odjecie f*odpowiedznie elemeny wiersza
             }
-
-
             //dolna czesc kolumny zapelniamy zerami
             A[i][k] = 0;
         }
-
         //print(A);        //etap obliczen
     }
     //SOE::print(A);            //macierz schodkowa
@@ -179,40 +191,39 @@ int SOE::eliminacja(double **A,  double *B)
 //obliczenie niewiadomych
 double* SOE::result(double **A,  double *B, double *x){
 
-    // od istatniego rownania do pierwszego
+    // od ostatniego rownania do pierwszego
     for (int i = dane.Nodes_number-1; i >= 0; i--)
     {
-        // wspolczynniki macierzy B
-        x[i] = B[i];
+        x[i] = B[i];// wspolczynniki macierzy B
 
         //j=i+1, dlatego ze macierz jest trojkatna gorna
         for (int j=i+1; j<dane.Nodes_number; j++)
         {
-            //odejmujemy wszystkie wartosci oprocz wsp zmiennej aktualnie liczonej
-            x[i] -= A[i][j]*x[j];
+            x[i] -= A[i][j]*x[j]; //odejmujemy wszystkie wartosci oprocz wsp zmiennej aktualnie liczonej
         }
-
         //dzielimy wartosci po = przez wspolczynnik prz x i otrzymujemy szukany wynik
         x[i] = x[i]/A[i][i];
     }
 
     cout<<endl<<endl<<"Rozwiazanie ukladu rownan:"<<endl;
-    for (int i=0; i<dane.Nodes_number; i++)
+    for (int i=0; i<dane.Nodes_number; i++){
+        t0[i]=x[i];
         cout<<setprecision(7)<< " x"<<i<<" = "<< x[i] <<endl;
+    }
     return x;
 }
 
-void SOE::gauss_crout(double *x)
+void SOE::roz_gauss(double *x,double **h,double *tp)
 {
     // redukcja do postaci schodkowej
-    int singularM = SOE::eliminacja(G_H, G_P);
+    int singularM = SOE::eliminacja(h, tp);
 
     // w przpadku macierzy jednostkowej
     if (singularM != -1)
     {
         printf("Macierz jednostkowa!\n");
 
-        if (G_P[singularM])
+        if (tp[singularM])
             printf("Rownanie sprzeczne!");
         else
             printf("Nieskonczona liczba rozwiazan!");
@@ -220,80 +231,49 @@ void SOE::gauss_crout(double *x)
         return;
     }
 
-    result(G_H, G_P, x);
+    result(h, tp, x);
     cout<<endl;
 }
 
-//metoda trzecia
+//uklad rownan koniec
 
-bool SOE::gauss_crout2(double *X)
-{
-    double **AB = new double *[dane.Nodes_number];   //tablica dwuwymiarowa do obliczen
-    for (int i = 0; i <= dane.Nodes_number; i++)
-        AB[i] = new double[dane.Nodes_number+1];
+void SOE::rozwiazywanie_temp(){
+    double* X = new double[dane.Nodes_number];
+    double dt = dane.SimulationStepTime;
+    double time=500;
+    double *tmp_G_P = new double[dane.Nodes_number];
 
-    for(int i = 0; i < dane.Nodes_number ;i++)
-        for(int k = 0; k <= dane.Nodes_number ;k++)
-            if(k == dane.Nodes_number)
-                AB[i][k] = G_P[i];
-            else
-                AB[i][k] = G_H[i][k];
-
-    //pomocnicza tablica zamiany kolumn
-    int *W = new int[dane.Nodes_number];
-    for(int i=0; i<dane.Nodes_number ;i++)
-        W[i] = i;
-
-    //iteratory petli
-    int    i, j, k;
-    double m, s;        //zmienne pomocnicze
-
-    for( i = 0; i <= dane.Nodes_number; i++ )
-        W [i] = i;
-
-    // eliminacja współczynników
-    for( i = 0; i < dane.Nodes_number - 1; i++ )
-    {
-        k = i;
-        for( j = i + 1; j < dane.Nodes_number; j++ )
-            if( fabs ( AB[i][ W[k] ] ) < fabs ( AB[i][ W[j] ] ))
-                k = j;
-        swap ( W [k], W [i] );
-
-
-        for( j = i + 1; j < dane.Nodes_number ;j++ )
-        {
-            if( fabs (AB[i][ W[i] ]) < eps ) return false;
-            m = -AB[j][ W [i] ] / AB[i][ W[i] ];
-            for( k = i + 1; k <= dane.Nodes_number; k++ )
-                AB[j][ W[k] ] += m * AB[i][ W[k] ];
+    for (int i = 0; i < dane.Nodes_number; ++i) {
+        for (int j = 0; j < dane.Nodes_number; ++j) {
+            C_tau[i][j]=G_C[i][j]/dane.SimulationStepTime;    //([C]/tau)
+            G_H[i][j]+=C_tau[i][j];                          // [H]+[C_tau] to jest [H]+([C]/tau)
         }
     }
-
-    // wyliczanie niewiadomych
-    for( i = dane.Nodes_number - 1; i >= 0; i--)
-    {
-        if( fabs (AB[i][ W[i] ]) < eps ) return false;
-        s = AB[i][dane.Nodes_number];
-        for( j = dane.Nodes_number - 1; j >= i + 1; j--)
-            s -= AB[i][ W[j] ] * X [ W[j] ];
-        X [ W[i] ] = s / AB[i][ W[i] ];
+    for (int i = 0; i < (time/dt); ++i) {
+        for (int k = 0; k < dane.Nodes_number; ++k) {
+            tmp_G_P[k]=G_P[k];
+            C_t0[k]=0.0;
+        }
+        //kopia
+        double **tmp_G_H = new double*[dane.Nodes_number];
+        for (int w = 0; w < dane.Nodes_number; ++w) {
+            tmp_G_H[w] = new double[dane.Nodes_number];
+        }
+        for (int r = 0; r < dane.Nodes_number; ++r) {
+            for (int j = 0; j < dane.Nodes_number; ++j) {
+                tmp_G_H[r][j] = G_H[r][j];
+            }
+        }//kopia
+        for (int q = 0; q < dane.Nodes_number; ++q) {
+            for (int j = 0; j < dane.Nodes_number; ++j) {
+                C_t0[q]+= (C_tau[q][j] * t0[j]);                    //([C]/tau)*t0   //t0 bedzie sie zmieniac - kolejne rozwiazania temp
+            }
+             tmp_G_P[q]+=C_t0[q]; // [C_t0]+[P]          //   ([C]/tau)*t0 + [P]
+        }
+        roz_gauss(X,tmp_G_H,tmp_G_P);
     }
 
-    //print(AB);
-
-    for( i = 0; i < dane.Nodes_number; i++ )
-        cout << "x" << i + 1 << " = " << setw ( 7 ) << X [i]
-             << endl;
-
-    //for (int i = 0; i < N; i++)
-    //delete [] AB[i];
-    //delete [] AB;
-
-    return true;
 }
-
-//uklad rownan
 
 void SOE::display_G_H(){
     for (int i = 0; i < dane.Nodes_number; ++i) {
@@ -307,8 +287,17 @@ void SOE::display_G_P(){
     for (int i = 0; i < dane.Nodes_number; ++i) {
             cout <<setprecision(6)<<G_P[i] << "   ";
         }
+    cout << endl;
 }
-
+void SOE::display_G_C(){
+    for (int i = 0; i < dane.Nodes_number; ++i) {
+        for (int j = 0; j < dane.Nodes_number; ++j) {
+            cout <<setprecision(5)<<G_C[i][j] << "   ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
 
 /*SOE::~SOE() {
    for (int i = 0; i < dane.Nodes_number; ++i) {

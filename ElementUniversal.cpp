@@ -107,24 +107,6 @@ void ElementUniversal::wyswietl_tab_FN(){
     display_tab_E4(tab_FN);
 }
 
-//sprawdzenie testowe pkt
-/*    void ElementUniversal::funkja_siatka(){
-        punkty[0].X = 0.0;
-        punkty[0].Y = 0.0;
-
-        punkty[1].X = 0.025;
-        punkty[1].Y = 0.0;
-
-        punkty[2].X = 0.025;
-        punkty[2].Y = 0.025;
-
-        punkty[3].X = 0.0;
-        punkty[3].Y = 0.025;
-        for (int i = 0; i < 4; ++i) {
-            cout << punkty[i].X << "    " << punkty[i].Y << endl;
-        }
-    }*/
-
 void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){  //macierz H i macierz C
 
     double tab_jakobian[2][2], tab_j_wyzn[2][2];//jakobian przemnozony przez odwrotnosc wyzn_J
@@ -157,10 +139,10 @@ void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){  //macierz H
                 }
             }
         }
-        cout<<endl<<"Jakobian dla "<<q+1<<" pkt calk"<<endl;
-        display_tab_22(tab_jakobian);
+    //    cout<<endl<<"Jakobian dla "<<q+1<<" pkt calk"<<endl;
+    //    display_tab_22(tab_jakobian);
         wyz_j = tab_jakobian[0][0] * tab_jakobian[1][1] - tab_jakobian[0][1] * tab_jakobian[1][0];
-        cout<<"det J = "<<wyz_j<<endl;
+    //    cout<<"det J = "<<wyz_j<<endl;
 
         //jakobian przemnozony i odwrocony
         for (int i = 0; i < 2; i++) {
@@ -216,10 +198,10 @@ void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){  //macierz H
 
     }//koniec petli q dla ilosci pkt c
 
-    cout<<endl << "tab_X - po dN/x" << endl;
+/*    cout<<endl << "tab_X - po dN/x" << endl;
     display_tab_E4(tab_X);
     cout << "tab_Y - po dN/y" << endl;
-    display_tab_E4(tab_Y);
+    display_tab_E4(tab_Y);*/
 
     cout<<endl<<"H dla elementu "<<nr_e+1<<endl;
     display_H(H_kon);

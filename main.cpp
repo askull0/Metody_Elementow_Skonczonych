@@ -48,24 +48,23 @@ int main() {
        elementUniversal.macierz_Hbc(ile_pkt,siatka.Elements[i],i);//i wektor P
         siatka.Elements[i].obliczanie_h_calk();
         cout<<endl;
+        cout<<"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --"<<endl;
         cout<<"H calkowite elmentu "<<i+1<<endl;
-        siatka.Elements[i].display_H_calk();
+        siatka.Elements[i].display_H_calk();  cout << endl;
         cout<<"P calkowite elmentu "<<i+1<<endl;
-        siatka.Elements[i].display_P_calk();
-
+        siatka.Elements[i].display_P_calk();  cout << endl;
+        cout<<"C calkowite elmentu "<<i+1<<endl;
+        siatka.Elements[i].display_C_calk();
+        cout<<"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --"<<endl;
    }
 
     SOE soe;
     soe.agregacja(siatka);
     cout<<endl<<"Globalne H"<<endl;soe.display_G_H();
     cout<<endl<<"Globalne P"<<endl;soe.display_G_P();
+    cout<<endl<<"Globalne C"<<endl;soe.display_G_C();
 
-    double* X = new double[dane.Nodes_number];
-    soe.gauss_crout(X);
-
-
-//    soe.gauss_crout2(X);
-//    for (int i = 0; i < dane.Nodes_number; ++i) { cout<<x<<i<<" = "<<X[i]<<endl;  }
+    soe.rozwiazywanie_temp();
 
 
 /*  //wszytskie naraz h calk
