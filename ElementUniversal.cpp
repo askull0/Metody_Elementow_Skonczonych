@@ -198,10 +198,10 @@ void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){  //macierz H
 
     }//koniec petli q dla ilosci pkt c
 
-/*    cout<<endl << "tab_X - po dN/x" << endl;
+    cout<<endl << "tab_X - po dN/x" << endl;
     display_tab_E4(tab_X);
     cout << "tab_Y - po dN/y" << endl;
-    display_tab_E4(tab_Y);*/
+    display_tab_E4(tab_Y);
 
     cout<<endl<<"H dla elementu "<<nr_e+1<<endl;
     display_H(H_kon);

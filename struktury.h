@@ -74,11 +74,11 @@ public:
     static void print(double ** A);
     static void swap_row(double **A, double * B, int i, int j);
     static int eliminacja(double **A,  double *B);
-    double* result(double **A,  double *B, double *x);
+    double* result(double **A,  double *B, double *x, int q, Grid& siatka);
     static void gauss_elim(double **A,  double *B, double *x);
-    void roz_gauss(double *x,double **h,double *tp);
+    void roz_gauss(double *x,double **h,double *tp,int q,Grid& siatka);
 
-    void rozwiazywanie_temp();
+    void rozwiazywanie_temp(Grid& siatka);
   //  ~SOE();
 };
 

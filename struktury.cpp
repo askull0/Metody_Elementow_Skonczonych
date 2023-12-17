@@ -1,4 +1,7 @@
 #include "struktury.h"
+#include <fstream>
+
+void zapis_ParaView(ofstream& file, double *tab, Grid& siatka);
 
 void Element::set_tabH(double tab[4][4]) {
     for(int i = 0; i < 4; i++) {
@@ -118,9 +121,9 @@ void SOE::agregacja(Grid &siatka) {
 }
 
 //uklad rownan - metoda 1
-
+/*
 // wyswietl macierz
-/*void SOE::print(double ** A)
+void SOE::print(double ** A)
 {
     for (int i=0; i<dane.Nodes_number; i++, cout<<endl)
         for (int j=0; j<dane.Nodes_number; j++)
@@ -189,7 +192,7 @@ int SOE::eliminacja(double **A,  double *B)
 }
 
 //obliczenie niewiadomych
-double* SOE::result(double **A,  double *B, double *x){
+double* SOE::result(double **A,  double *B, double *x, int q, Grid& siatka){
 
     // od ostatniego rownania do pierwszego
     for (int i = dane.Nodes_number-1; i >= 0; i--)
@@ -205,15 +208,35 @@ double* SOE::result(double **A,  double *B, double *x){
         x[i] = x[i]/A[i][i];
     }
 
-    cout<<endl<<endl<<"Rozwiazanie ukladu rownan:"<<endl;
+    //zapis do pliku ParaView
+    const string name = "foo";
+    const string extension = ".vtk";
+
+    string full_name = name + to_string(q) + extension;
+    ofstream file_name(full_name);
+    zapis_ParaView(file_name,x,siatka);
+    //
+
+
+//    cout<<endl<<endl<<"Rozwiazanie ukladu rownan:"<<endl;                                                          //1
     for (int i=0; i<dane.Nodes_number; i++){
         t0[i]=x[i];
-        cout<<setprecision(7)<< " x"<<i<<" = "<< x[i] <<endl;
+//        cout<<setprecision(7)<< " x"<<i<<" = "<< x[i] <<endl;                                                      //1
     }
+    double max=x[0],min=x[0];
+    for (int i = 0; i < dane.Nodes_number; ++i) {
+        if(x[i]>max){
+            max =x[i];
+        }
+        if(x[i]<min){
+            min=x[i];
+        }
+    }
+    cout<<endl<<"Min: "<<min<<" Max: "<<max<<endl;                                                                 //1
     return x;
 }
 
-void SOE::roz_gauss(double *x,double **h,double *tp)
+void SOE::roz_gauss(double *x,double **h,double *tp,int q,Grid& siatka)
 {
     // redukcja do postaci schodkowej
     int singularM = SOE::eliminacja(h, tp);
@@ -231,13 +254,12 @@ void SOE::roz_gauss(double *x,double **h,double *tp)
         return;
     }
 
-    result(h, tp, x);
-    cout<<endl;
+    result(h, tp, x,q,siatka);
 }
 
 //uklad rownan koniec
 
-void SOE::rozwiazywanie_temp(){
+void SOE::rozwiazywanie_temp(Grid& siatka){
     double* X = new double[dane.Nodes_number];
     double dt = dane.SimulationStepTime;
     double time=500;
@@ -270,10 +292,13 @@ void SOE::rozwiazywanie_temp(){
             }
              tmp_G_P[q]+=C_t0[q]; // [C_t0]+[P]          //   ([C]/tau)*t0 + [P]
         }
-        roz_gauss(X,tmp_G_H,tmp_G_P);
+
+        roz_gauss(X,tmp_G_H,tmp_G_P,i,siatka);
     }
 
 }
+
+
 
 void SOE::display_G_H(){
     for (int i = 0; i < dane.Nodes_number; ++i) {
@@ -322,7 +347,7 @@ void wyswietl_nodes(Grid siatka){
 }
 void wyswietl_elements(Grid siatka){
     for (int i = 0; i <dane.Elements_number; ++i) {
-        cout<<"Element "<<i+1<<": "<<endl;
+        cout<<endl<<"Element "<<i+1<<": "<<endl;
         for (auto & j : siatka.Elements[i].ID) { // for (int j = 0; j < 4; ++j) {
             cout<<"["<<j.X<<" , ";                 //       cout<<siatka.Elements[i].ID[j].X<<" ";
             cout<<j.Y<<"] BC: ";

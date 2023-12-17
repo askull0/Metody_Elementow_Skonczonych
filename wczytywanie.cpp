@@ -38,7 +38,7 @@ void wczytywanie(Grid& siatka){
                 cerr << "Blad konwersji na liczbe calkowita " << e.what() << endl;
             }
         }
-        cout<<"dane:"<<endl;wyswietl_dane();
+        cout<<"dane:"<<endl;wyswietl_dane();                                                                       //1
         //Grid siatka;
         siatka=Grid();
         getline(plik, zm);//"nieuzyteczna linijka z pliku;
@@ -53,7 +53,7 @@ void wczytywanie(Grid& siatka){
                 cerr << "Blad " << e.what() << endl;
             }
         }
-        cout<<"wspol node:"<<endl;wyswietl_nodes(siatka);
+        cout<<"wspol node:"<<endl;wyswietl_nodes(siatka);                                                          //1
         getline(plik, zm);//nieuztyczena linika z pliku";
         for(int i=0;i<dane.Elements_number;i++){
             try {
@@ -69,7 +69,7 @@ void wczytywanie(Grid& siatka){
                 cerr << "Blad " << e.what() << endl;
             }
         }
-       // cout<<"elem :"<<endl;//wyswietl_elements(siatka);
+      //  cout<<"elem :"<<endl;wyswietl_elements(siatka);
        getline(plik, zm);//cout<<"nieuzyteczna linijka z pliku :"<<zm<<endl;
         getline(plik, zm);  istringstream linijka(zm) ;
        int tmp;
@@ -77,7 +77,7 @@ void wczytywanie(Grid& siatka){
             linijka.ignore();//igonruje koljeny znak - przecinki
              siatka.Nodes[tmp-1].BC=1;
         }
-        cout<<endl<<"BC:"<<endl;wyswietl_BC(siatka);
+        //cout<<endl<<"BC:"<<endl;wyswietl_BC(siatka);                                                               //1
         
         //przypisanie wszytskiego
         for (int i = 0; i < dane.Elements_number; ++i){
@@ -86,17 +86,55 @@ void wczytywanie(Grid& siatka){
             }
         }
 
-        cout<<endl;
-        wyswietl_elements(siatka);
+        wyswietl_elements(siatka);                                                                                //1
 
         /*for(auto & node : grid.elements[i].nodes){
             node = grid.nodes[node.node_id-1];
         }*/
             
-        cout<<endl;
+        cout<<endl;                                                                                              //1
         plik.close();
     }else{
         cerr << "Nie udalo się otworzyc pliku." << endl;
     }
 
 }
+
+void zapis_ParaView(ofstream& file, double *tab, Grid& siatka){
+    if (file.is_open()) {
+        file <<"# vtk DataFile Version 2.0\n"
+               "Unstructured Grid Example\n"
+               "ASCII\n"
+               "DATASET UNSTRUCTURED_GRID\n\n";
+        file<<"POINTS "<<dane.Nodes_number<<" float\n";
+        for (int i = 0; i < dane.Nodes_number; ++i) {
+            file<<siatka.Nodes[i].X<<" "<<siatka.Nodes[i].Y<<" "<<0<<"\n";
+        }
+        file<<"\nCELLS "<<dane.Elements_number<<" "<<dane.Elements_number*5<<"\n";
+        for (int i = 0; i < dane.Elements_number; ++i) {
+            file<<4<<" ";
+            for (int j = 0; j < 4; ++j) {
+                file << siatka.Elements[i].ID[j].id - 1<< " ";
+            }file<<"\n";
+        }
+        int type = 9;
+        file<<"\nCELL_TYPES "<<type<<"\n";
+        for (int i = 0; i < dane.Elements_number; ++i) {
+            file<<9<<"\n";
+        }
+        file<<"\nPOINT_DATA "<<dane.Nodes_number<<"\n"
+              "SCALARS Temp float 1\n"
+              "LOOKUP_TABLE default\n";
+        for (int i = 0; i < dane.Nodes_number; ++i) {   //tab to x - rozwiazania temp
+            file<<tab[i]<<"\n";
+        }
+        
+        file.close();
+    } else {
+        cerr << "Nie mozna otworzyc pliku do zapisu." << endl;
+    }
+}
+
+
+
+//1    - zakomentowane wysseitlanie ładnie co wczytane z pliku i grid
