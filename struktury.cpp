@@ -262,7 +262,7 @@ void SOE::roz_gauss(double *x,double **h,double *tp,int q,Grid& siatka)
 void SOE::rozwiazywanie_temp(Grid& siatka){
     double* X = new double[dane.Nodes_number];
     double dt = dane.SimulationStepTime;
-    double time=500;
+    double time=dane.SimulationTime;
     double *tmp_G_P = new double[dane.Nodes_number];
 
     for (int i = 0; i < dane.Nodes_number; ++i) {

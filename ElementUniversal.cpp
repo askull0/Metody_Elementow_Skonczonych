@@ -39,7 +39,7 @@ double  ElementUniversal::dNetta3(double e){return (1./4.)*(1+e);}
 double  ElementUniversal::dNetta4(double e){return (-1./4.)*(1+e);}
 
 void  ElementUniversal::obliczanie_ksi_etta(){//oblczianie tabelek z wartosciami po ksi i etta
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {  //tyle funkcji ksztaltu
         int licznik = 0, licznik2 = 0;
         for (int j = 0; j < E; j++) {
             if (licznik <= obj.n) {
@@ -198,17 +198,17 @@ void ElementUniversal::jakobian(Element& elem, int& GD_k,int nr_e){  //macierz H
 
     }//koniec petli q dla ilosci pkt c
 
-    cout<<endl << "tab_X - po dN/x" << endl;
+/*    cout<<endl << "tab_X - po dN/x" << endl;
     display_tab_E4(tab_X);
-    cout << "tab_Y - po dN/y" << endl;
+    cout << "tab_Y - po dN/y" << endl;*/
     display_tab_E4(tab_Y);
 
-    cout<<endl<<"H dla elementu "<<nr_e+1<<endl;
-    display_H(H_kon);
+/*    cout<<endl<<"H dla elementu "<<nr_e+1<<endl;
+    display_H(H_kon);*/
     elem.set_tabH(H_kon);
 
-    cout<<endl<<"C dla elementu "<<nr_e+1<<endl;
-    display_tab_44(C_kon);
+/*    cout<<endl<<"C dla elementu "<<nr_e+1<<endl;
+    display_tab_44(C_kon);*/
     elem.set_C(C_kon);
 
     for (int i = 0; i < 4; ++i) {
@@ -302,11 +302,11 @@ void ElementUniversal::macierz_Hbc(int e,Element& elem,int nr_e) {//liczy tez we
 
     }
 
-    cout<<"HBC dla elementu "<<nr_e+1<<endl;
-    display_tab_44(hbc_sciany);
+ /*   cout<<"HBC dla elementu "<<nr_e+1<<endl;
+    display_tab_44(hbc_sciany);*/
     elem.set_Hbc(hbc_sciany);
-    cout<<"\nWektor P dla elementu "<<nr_e+1<<endl;
-    display_tab_4(tmp_p_sciany);
+ /*   cout<<"\nWektor P dla elementu "<<nr_e+1<<endl;
+    display_tab_4(tmp_p_sciany);*/
     elem.set_P(tmp_p_sciany);
 
 }

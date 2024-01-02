@@ -14,13 +14,13 @@ int main() {
    Grid siatka;
 
    wczytywanie(siatka);
-    wyswietl_nodes(siatka);                                                                                      //1
+   //wyswietl_nodes(siatka);                                                                                      //1
                       // Gauss(4).wym1D(fun1);  // Gauss(4).wym2D(fun2);
 
    int ile_pkt=2;
    ElementUniversal elementUniversal(ile_pkt);
    elementUniversal.obliczanie_ksi_etta();
-   elementUniversal.wyswietl();                                                                                   //1
+ //  elementUniversal.wyswietl();                                                                                   //1
 
    elementUniversal.oblicanie_tabN();
 /*
@@ -35,7 +35,7 @@ int main() {
 */
 
     elementUniversal.obliczanie_tab_FN();
-    elementUniversal.wyswietl_tab_FN();                                                                         //1
+ //   elementUniversal.wyswietl_tab_FN();                                                                         //1
 
 
     for (int i = 0; i < dane.Elements_number; ++i) {
@@ -45,7 +45,7 @@ int main() {
        elementUniversal.jakobian(siatka.Elements[i], dane.Conductivity,i);
        elementUniversal.macierz_Hbc(ile_pkt,siatka.Elements[i],i);//i wektor P
        siatka.Elements[i].obliczanie_h_calk();
-        cout<<endl;
+ /*       cout<<endl;
         cout<<"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --"<<endl;
         cout<<"H calkowite elmentu "<<i+1<<endl;
         siatka.Elements[i].display_H_calk();  cout << endl;
@@ -53,14 +53,16 @@ int main() {
         siatka.Elements[i].display_P_calk();  cout << endl;
         cout<<"C calkowite elmentu "<<i+1<<endl;
         siatka.Elements[i].display_C_calk();
-        cout<<"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --"<<endl;
+        cout<<"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --"<<endl;*/
    }
 
     SOE soe;
     soe.agregacja(siatka);
+/*
     cout<<endl<<"Globalne H"<<endl;soe.display_G_H();
     cout<<endl<<"Globalne P"<<endl;soe.display_G_P();
     cout<<endl<<"Globalne C"<<endl;soe.display_G_C();
+*/
 
     soe.rozwiazywanie_temp(siatka);
 

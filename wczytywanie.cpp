@@ -10,8 +10,9 @@ void wczytywanie(Grid& siatka){
     string zm,sm; char smiec; int liczba, liczba1, l1,l2,l3,l4; double w_x,w_y;
     fstream plik;
    // plik.open("Test1_4_4.txt", ios::in);
-   plik.open("Test2_4_4_MixGrid.txt", ios::in);
-   // plik.open("Test3_31_31_kwadrat.txt", ios::in);
+ //  plik.open("Test2_4_4_MixGrid.txt", ios::in);
+    plik.open("Test3_31_31_kwadrat.txt", ios::in);
+  //  plik.open("Test4_31_31_trapez.txt", ios::in);
   //  plik.open("Testowe.txt", ios::in);
 
     if(plik.is_open())//plik.good())
@@ -38,7 +39,7 @@ void wczytywanie(Grid& siatka){
                 cerr << "Blad konwersji na liczbe calkowita " << e.what() << endl;
             }
         }
-        cout<<"dane:"<<endl;wyswietl_dane();                                                                       //1
+   //     cout<<"dane:"<<endl;wyswietl_dane();                                                                       //1
         //Grid siatka;
         siatka=Grid();
         getline(plik, zm);//"nieuzyteczna linijka z pliku;
@@ -53,7 +54,7 @@ void wczytywanie(Grid& siatka){
                 cerr << "Blad " << e.what() << endl;
             }
         }
-        cout<<"wspol node:"<<endl;wyswietl_nodes(siatka);                                                          //1
+ //       cout<<"wspol node:"<<endl;wyswietl_nodes(siatka);                                                          //1
         getline(plik, zm);//nieuztyczena linika z pliku";
         for(int i=0;i<dane.Elements_number;i++){
             try {
@@ -86,13 +87,13 @@ void wczytywanie(Grid& siatka){
             }
         }
 
-        wyswietl_elements(siatka);                                                                                //1
+   //     wyswietl_elements(siatka);                                                                                //1
 
         /*for(auto & node : grid.elements[i].nodes){
             node = grid.nodes[node.node_id-1];
         }*/
             
-        cout<<endl;                                                                                              //1
+ //       cout<<endl;                                                                                              //1
         plik.close();
     }else{
         cerr << "Nie udalo się otworzyc pliku." << endl;
@@ -114,11 +115,11 @@ void zapis_ParaView(ofstream& file, double *tab, Grid& siatka){
         for (int i = 0; i < dane.Elements_number; ++i) {
             file<<4<<" ";
             for (int j = 0; j < 4; ++j) {
-                file << siatka.Elements[i].ID[j].id - 1<< " ";
+                file << siatka.Elements[i].ID[j].id- 1 << " ";
             }file<<"\n";
         }
-        int type = 9;
-        file<<"\nCELL_TYPES "<<type<<"\n";
+       // int type = 9;
+        file<<"\nCELL_TYPES "<<dane.Elements_number<<"\n";
         for (int i = 0; i < dane.Elements_number; ++i) {
             file<<9<<"\n";
         }
